@@ -50,7 +50,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             'unique': _("A user with that username already exists."),
         },
     )
-    email = models.EmailField(_('email address'), blank=True)
+    email = models.EmailField(_('email address'), unique=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
