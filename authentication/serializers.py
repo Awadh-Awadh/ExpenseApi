@@ -1,3 +1,4 @@
+from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from authentication.models import CustomUser
 
@@ -14,3 +15,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         return CustomUser.objects.create_user(**validated_data)
 
 
+class EmailVerifySerializer(serializers.ModelSerializer):
+        token = serializers.CharField(max_length=555)
+
+        class Meta:
+                model = CustomUser
+                fields = ['token']

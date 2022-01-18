@@ -1,6 +1,6 @@
 from rest_framework.response import Response
-from rest_framework import status, generics
-from authentication.serializers import RegisterSerializer
+from rest_framework import status, generics, views
+from authentication.serializers import EmailVerifySerializer, RegisterSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
 from .utils import Util
@@ -8,6 +8,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.conf import settings
 import jwt
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+
 
 # Create your views here.
 
@@ -26,7 +30,8 @@ class RegisterView(generics.GenericAPIView):
             user = CustomUser.objects.get(email=user_data['email'])
             token = RefreshToken.for_user(user).access_token
 
-            #using sites framework to create domains
+            #using sites framework to create domains that users click for email verification
+
             current_site = get_current_site(request).domain
             relative_link = reverse('verify-email')
             absurl = f'http://{current_site}{relative_link}?token={str(token)}'
@@ -40,13 +45,24 @@ class RegisterView(generics.GenericAPIView):
                 "subject": "Verify your email",
                 "to_email": user.email
             }
+            '''
+            sending email that contains all email verification link
+            '''
             Util.send_mail(data)
 
             return Response(serializer.data, status.HTTP_201_CREATED)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class VerifyEmail(generics.GenericAPIView):
+class VerifyEmail(views.APIView):
+
+    '''
+    Manually creating token description fields in the swager ui
+    
+    '''
+    token_param = openapi.Parameter('token', in_=openapi.IN_QUERY, description="Description", type=openapi.TYPE_STRING)
+    serializer_class = EmailVerifySerializer
+    @swagger_auto_schema(manual_parameters=[token_param])    
     def get(self, request):
         token = request.GET.get('token')
         try:
