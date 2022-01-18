@@ -29,7 +29,7 @@ class RegisterView(generics.GenericAPIView):
             #using sites framework to create domains
             current_site = get_current_site(request).domain
             relative_link = reverse('verify-email')
-            absurl = 'http://' + current_site + relative_link + '?token='+str(token)
+            absurl = f'http://{current_site}{relative_link}?token={str(token)}'
             email_body = f"""            
             Hello {user_data['username']}. Click the link below to activate your email\n            
             {absurl}        
