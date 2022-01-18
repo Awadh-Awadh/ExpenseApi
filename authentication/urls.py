@@ -1,10 +1,12 @@
 from django.urls import path
-from authentication.views import RegisterView, VerifyEmail
+from authentication.views import RegisterView, VerifyEmail, LoginView
 
 
 urlpatterns = [
   
   path('register/', RegisterView.as_view(), name='register'),
-  path('verify-email/', VerifyEmail.as_view(), name = 'verify-email')
+  path('verify-email/', VerifyEmail.as_view(), name = 'verify-email'),
+  path('login/', LoginView.as_view(), name = 'login')
+
 
 ]

@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import status, generics, views
-from authentication.serializers import EmailVerifySerializer, RegisterSerializer
+from authentication.serializers import EmailVerifySerializer, LoginSerializer, RegisterSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
 from .utils import Util
@@ -10,6 +10,8 @@ from django.conf import settings
 import jwt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.contrib.auth import authenticate
+from rest_framework.exceptions import AuthenticationFailed
 
 
 
@@ -55,7 +57,6 @@ class RegisterView(generics.GenericAPIView):
 
 
 class VerifyEmail(views.APIView):
-
     '''
     Manually creating token description fields in the swager ui
     
@@ -77,3 +78,28 @@ class VerifyEmail(views.APIView):
         except jwt.exceptions.DecodeError:
             return Response({"error": "Invalid Token"}, status=status.HTTP_400_BAD_REQUEST)
             
+
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        email = request.data.get('email', None)
+        password = request.data.get('password', None)
+
+        user = authenticate(username=email, password=password)
+
+        if not user:
+            raise AuthenticationFailed("Invalid credentials. Try again")
+
+        if not user.is_active:
+            raise AuthenticationFailed("Account disabled contact admin")
+
+        if user.is_verified:
+            raise AuthenticationFailed("Email is not verified")
+
+        serializer = self.serializer_class(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+        

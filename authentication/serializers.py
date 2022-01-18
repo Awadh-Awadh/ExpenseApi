@@ -21,3 +21,10 @@ class EmailVerifySerializer(serializers.ModelSerializer):
         class Meta:
                 model = CustomUser
                 fields = ['token']
+
+class LoginSerializer(serializers.ModelSerializer):
+    password=serializers.CharField(max_length=68, min_length=6, write_only=True)
+    class Meta:
+        model= CustomUser
+        fields = ['email', 'password', 'tokens', 'username']
+        read_only_fields=('tokens', 'username')

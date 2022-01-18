@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser, UserManager, PermissionsMixin
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your models here.
 
@@ -80,8 +80,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
-    def token(self):
-        return ''
+    @property
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
 
     def __str__(self) -> str:
         return self.email
