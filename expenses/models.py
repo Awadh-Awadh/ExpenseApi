@@ -16,7 +16,7 @@ class Expenses(models.Model):
       ("MIDDLE", "MIDDLE")
     )
     categories = models.CharField(choices=CATEGOIES_EXPENSE, max_length=255)
-    amount=models.DecimalField(decimal_places=4, max_digits=5)
+    amount=models.DecimalField(decimal_places=2, max_digits=5)
     owner = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
     description = models.TextField()
     date=models.DateField(blank=False, null=False)
