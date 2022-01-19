@@ -10,7 +10,7 @@ from .permissions import IsOwner
 
 class ExpensesListAPIView(generics.ListCreateAPIView):
     serializer_class = ExpensesSerializer
-    permissions_classes= (permissions.IsAuthenticated,)
+    permission_classes= (permissions.IsAuthenticated,)
 
 
 
@@ -25,7 +25,7 @@ class ExpensesListAPIView(generics.ListCreateAPIView):
 class ExpensesDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = ExpensesSerializer
-    permissions_classes = (permissions.IsAuthenticated,IsOwner)
+    permission_classes = (permissions.IsAuthenticated,IsOwner)
     lookup_fields = ["pk"]
 
     def get_queryset(self):
