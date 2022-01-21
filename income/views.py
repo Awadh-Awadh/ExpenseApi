@@ -11,7 +11,7 @@ from .permissions import IsOwner
 class IncomeAPIView(generics.ListCreateAPIView):
 
   serializer_classes = IncomeSerializer
-  permission_classes = (permissions.IsAuthenticated,)
+  permission_classes = (permissions.IsAuthenticated, IsOwner)
   query_set = Income.objects.all()
 
 
@@ -20,3 +20,14 @@ class IncomeAPIView(generics.ListCreateAPIView):
 
   def get_queryset(self):
       return self.query_set.filter(owner=self.request.user)
+
+
+
+class IncomeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_classes = IncomeSerializer
+    permission_classes = (permissions.IsAuthenticated)
+    query_set = Income.objects.all()
+    lookup_fields = "pk"
+
+    def get_queryset(self):
+        return self.query_set.filter(owner=self.request.user)
