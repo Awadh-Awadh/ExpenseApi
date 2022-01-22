@@ -1,7 +1,7 @@
-import pdb
-from unittest.util import _MAX_LENGTH
+from jwt import DecodeError
 from rest_framework import serializers
 from authentication.models import CustomUser
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -37,11 +37,6 @@ class RequestPasswordResetEmailSerializer(serializers.Serializer):
         class Meta:
             fields=["email"]
 
-        def validate(self, attrs):
+       
 
-            try:
-                pass
-            except Exception as e:
-                pass
-
-            return super().validate(attrs)
+         

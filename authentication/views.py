@@ -1,3 +1,4 @@
+from django.template import exceptions
 from rest_framework.response import Response
 from rest_framework import status, generics, views
 from authentication.serializers import EmailVerifySerializer, LoginSerializer, RegisterSerializer, RequestPasswordResetEmailSerializer
@@ -13,6 +14,9 @@ from drf_yasg import openapi
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from .renderers import AuthRender
+from django.utils.encoding import smart_bytes, smart_str, force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 
 
@@ -61,6 +65,7 @@ class RegisterView(generics.GenericAPIView):
 class VerifyEmail(views.APIView):
     '''
     Manually creating token description fields in the swager ui
+    using swagger docs set up the configuration as stated below
     
     '''
     token_param = openapi.Parameter('token', in_=openapi.IN_QUERY, description="Description", type=openapi.TYPE_STRING)
@@ -108,4 +113,95 @@ class RequestPasswordResetEmailApiView(generics.GenericAPIView):
         serializer_class = RequestPasswordResetEmailSerializer
         def post(self, request):
             serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
+            data=request.data
+            
+            """
+                A function that gets called when is_valid() is invoked
+                We get the user and create a uid64 for the user, then make a password reset token for the user
+                Using the sites framework, a url is created with the users data and using the send_mail function in the
+                util module , send an email to the user
+
+                from django.utils.encording
+
+                smart_str(s, encoding='utf-8', strings_only=False, errors='strict')
+                Returns a str object representing arbitrary object s. Treats bytestrings using the encoding codec.
+
+                force_str(s, encoding='utf-8', strings_only=False, errors='strict')
+                Similar to smart_str(), except that lazy instances are resolved to strings, rather than kept as lazy objects.
+
+
+                smart_bytes(s, encoding='utf-8', strings_only=False, errors='strict')
+                Returns a bytestring version of arbitrary object s, encoded as specified in encoding.
+
+            
+
+                force_bytes(s, encoding='utf-8', strings_only=False, errors='strict')
+                Similar to smart_bytes, except that lazy instances are resolved to bytestrings, rather than kept as lazy objects.
+
+
+
+                from django.utils.http
+                urlsafe_base64_encode(s)
+                    Encodes a bytestring to a base64 string for use in URLs, stripping any trailing equal signs.
+
+                urlsafe_base64_decode(s)
+                Decodes a base64 encoded string, adding back any trailing equal signs that might have been stripped.
+            """
+            email = data.get("email", "")
+            if CustomUser.objects.filter(email=email).exists():
+                user = CustomUser.objects.get(email=email)
+                uid64 = urlsafe_base64_encode(smart_bytes(user.id))
+                token = PasswordResetTokenGenerator().make_token(user)
+
+                relative_link = reverse("password-reset-email", kwargs={'uidb64':uid64, 'token': token})
+                
+                """
+                get_current_site() function will try to get the current site by comparing the domain with the host name from the request.get_host() method.
+                
+                """
+                current = get_current_site(request).domain
+                abs_url = f"http://{current}{relative_link}"
+                email_body = f""" Hello . Click the link below to activate your email\n{abs_url}        
+                                """
+                data = {
+                    "email_body": email_body,
+                    "subject": "Password Reset",
+                    "to_email": user.email
+                }
+                Util.send_mail(data)
+            return Response({"Success": "We have sent you a link to reset your pasword"}, status=status.HTTP_200_OK)
+
+
+
+class TokenCheckApi(generics.GenericAPIView):
+
+        """
+        View that when a user clicks a link in  the email the browser does a get request 
+        to validate the links
+
+        """
+
+        def get(self, request, uidb64, token):
+
+            """
+            get the user's id based on the uidb64
+            
+            """
+            try:
+                id = smart_str(urlsafe_base64_decode(uidb64))
+                user = CustomUser.objects.get(id=id)
+                """"
+                check tokens that have not been tampered with by the user
+                """
+
+                if not PasswordResetTokenGenerator.check_token(user, token):
+                    return Response({"error": "bad credentials or the has already been used"})
+                return Response({"success": True, "message": "credentials valid", "uidb64": uidb64, "token": token})
+
+
+
+
+            except UnicodeDecodeError as e:
+                return Response({"error": "Token is not valid. Pease request another one"})
+
+    
