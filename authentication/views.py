@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import status, generics, views
-from authentication.serializers import EmailVerifySerializer, LoginSerializer, RegisterSerializer
+from authentication.serializers import EmailVerifySerializer, LoginSerializer, RegisterSerializer, RequestPasswordResetEmailSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
 from .utils import Util
@@ -104,4 +104,8 @@ class LoginView(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-        
+class RequestPasswordResetEmailApiView(generics.GenericAPIView):
+        serializer_class = RequestPasswordResetEmailSerializer
+        def post(self, request):
+            serializer = self.serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)

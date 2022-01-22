@@ -1,3 +1,4 @@
+import pdb
 from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from authentication.models import CustomUser
@@ -28,3 +29,19 @@ class LoginSerializer(serializers.ModelSerializer):
         model= CustomUser
         fields = ['email', 'password', 'tokens', 'username']
         read_only_fields=('tokens', 'username')
+
+
+class RequestPasswordResetEmailSerializer(serializers.Serializer):
+        email = serializers.EmailField(min_length=2)
+
+        class Meta:
+            fields=["email"]
+
+        def validate(self, attrs):
+
+            try:
+                pass
+            except Exception as e:
+                pass
+
+            return super().validate(attrs)
