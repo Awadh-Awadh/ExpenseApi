@@ -12,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
+from .renderers import AuthRender
 
 
 
@@ -21,6 +22,7 @@ from rest_framework.exceptions import AuthenticationFailed
 class RegisterView(generics.GenericAPIView):
 
     serializer_class = RegisterSerializer
+    renderer_classes = (AuthRender,)
 
     def post(self, request):
         serializer=self.serializer_class(data=request.data)
