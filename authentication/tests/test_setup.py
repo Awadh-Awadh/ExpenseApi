@@ -2,7 +2,6 @@ from rest_framework.test import APITestCase
 from django.urls import reverse
 from faker import Faker
 
-
 class TestSetup(APITestCase):
     """
     Using Faker module to auto generate names
@@ -15,7 +14,7 @@ class TestSetup(APITestCase):
 
         self.user_data = {
           "email": self.fake.email(),
-          "username": self.fake.email.split('@')[0],
+          "username": self.fake.name(),
           "password": self.fake.email(),
         }
         return super().setUp()
