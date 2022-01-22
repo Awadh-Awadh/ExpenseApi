@@ -4,6 +4,14 @@ from rest_framework import status
 from django.test import client
 from ..models import CustomUser
 
+
+'''
+using import pdb pdb.set_trace() method creates a breaking point for you to inspect the data and know
+what to test for. For instance if response.data is same to the data defined. useful tool to know 
+the status code by just doing response.status_code
+
+'''
+
 class TestViews(TestSetup):
 
     def test_registration_with_no_data(self):
@@ -30,4 +38,3 @@ class TestViews(TestSetup):
        self.assertEqual(res.status_code, 200)
        
       
-       
