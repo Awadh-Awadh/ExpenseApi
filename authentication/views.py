@@ -1,7 +1,10 @@
 from django.template import exceptions
 from rest_framework.response import Response
 from rest_framework import status, generics, views
-from authentication.serializers import EmailVerifySerializer, LoginSerializer, RegisterSerializer, RequestPasswordResetEmailSerializer
+from authentication.serializers import (EmailVerifySerializer, LoginSerializer,
+                                         RegisterSerializer, RequestPasswordResetEmailSerializer,
+                                         SetPasswordSerializer
+                                         )
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
 from .utils import Util
@@ -204,4 +207,9 @@ class TokenCheckApi(generics.GenericAPIView):
             except UnicodeDecodeError as e:
                 return Response({"error": "Token is not valid. Pease request another one"})
 
-    
+class SetPasswordAPIView(generics.GenericAPIView):
+    serializer_class = SetPasswordSerializer
+    def patch(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({"success": True, "Message": "Password reset successfully"}, status = status.HTTP_200_OK)
