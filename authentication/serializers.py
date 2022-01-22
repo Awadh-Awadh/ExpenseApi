@@ -67,7 +67,7 @@ class SetPasswordSerializer(serializers.Serializer):
             password = attrs.get("password")
             uidb64 = attrs.get("uidb64")
             token = attrs.get("token")
-            id = force_bytes(urlsafe_base64_decode(uidb64))
+            id = smart_str(urlsafe_base64_decode(uidb64))
             user = CustomUser.objects.get(id=id)
             if not PasswordResetTokenGenerator.check_token(user, token):
                 return AuthenticationFailed("Invalid token", 401)

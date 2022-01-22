@@ -110,7 +110,15 @@ class LoginView(generics.GenericAPIView):
 
         serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+"""
+Steps for setting up password reset
 
+Setup an email view so as to send an email containing the link to set email
+View that when a user clicks a link in  the email the browser does a get request to validate the links
+Set up a view that sets up the password
+
+
+"""
 
 class RequestPasswordResetEmailApiView(generics.GenericAPIView):
         serializer_class = RequestPasswordResetEmailSerializer
@@ -197,7 +205,7 @@ class TokenCheckApi(generics.GenericAPIView):
                 check tokens that have not been tampered with by the user
                 """
 
-                if not PasswordResetTokenGenerator.check_token(user, token):
+                if not PasswordResetTokenGenerator().check_token(user, token):
                     return Response({"error": "bad credentials or the has already been used"})
                 return Response({"success": True, "message": "credentials valid", "uidb64": uidb64, "token": token})
 
