@@ -9,6 +9,9 @@ psycopg2 = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 drf-yasg = "*"
+coverage = "*"
+faker = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

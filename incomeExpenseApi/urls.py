@@ -20,7 +20,10 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+''''
+API documentations settings
 
+'''
 schema_view = get_schema_view(
    openapi.Info(
       title="Income Expense API",
@@ -40,6 +43,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
     path("expenses/", include("expenses.urls")),
+    path('income/', include('income.urls')),
+    path('starts/', include('userstarts.urls')),
     path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

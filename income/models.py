@@ -19,6 +19,9 @@ class Income(models.Model):
   description = models.TextField()
   date = models.DateField(blank=False, null=True)
 
+  class Meta:
+      ordering = ['-date']
+
 
   def __str__(self):
     return f"{str(self.owner)}'s Income"

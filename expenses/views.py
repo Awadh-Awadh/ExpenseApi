@@ -25,7 +25,13 @@ class ExpensesListAPIView(generics.ListCreateAPIView):
 class ExpensesDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = ExpensesSerializer
-    permission_classes = (permissions.IsAuthenticated,IsOwner)
+
+
+    '''
+    Isowner permission class ensures that only the user that created has the right to edit
+    
+    '''
+    permission_classes = (permissions.IsAuthenticated, IsOwner)
     lookup_fields = ["pk"]
 
     def get_queryset(self):

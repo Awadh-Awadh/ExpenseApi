@@ -10,7 +10,7 @@ from .permissions import IsOwner
 
 class IncomeAPIView(generics.ListCreateAPIView):
 
-  serializer_classes = IncomeSerializer
+  serializer_class = IncomeSerializer
   permission_classes = (permissions.IsAuthenticated, IsOwner)
   query_set = Income.objects.all()
 
@@ -25,7 +25,13 @@ class IncomeAPIView(generics.ListCreateAPIView):
 
 class IncomeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_classes = IncomeSerializer
-    permission_classes = (permissions.IsAuthenticated)
+
+
+    '''
+    Isowner permission class ensures that only the user that created has the right to edit
+    
+    '''
+    permission_classes = (permissions.IsAuthenticated, IsOwner)
     query_set = Income.objects.all()
     lookup_fields = "pk"
 

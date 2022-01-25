@@ -105,7 +105,7 @@ class LoginView(generics.GenericAPIView):
         if not user.is_active:
             raise AuthenticationFailed("Account disabled contact admin")
 
-        if not user.is_verified:
+        if  user.is_verified:
             raise AuthenticationFailed("Email is not verified")
 
         serializer = self.serializer_class(user)
