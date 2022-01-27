@@ -1,12 +1,12 @@
-from email import charset
-import pdb
 from rest_framework import renderers
 import json
 
 """
 renderers help in customizing the response of data rendered by django into what you want it to look like.
 For intance when creating a user and exists errors, you can create a prefix key 'errors' before the data.
-Renders help in achieving this objective
+Renders help in achieving this objective. To use renders we need to inherit from renderers.JSONRender and overide 
+the render function
+Charset should be specified.
 
 """
 

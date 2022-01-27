@@ -44,6 +44,7 @@ class RegisterView(generics.GenericAPIView):
             #using sites framework to create domains that users click for email verification
 
             current_site = get_current_site(request).domain
+            print(current_site)
             relative_link = reverse('verify-email')
             absurl = f'http://{current_site}{relative_link}?token={str(token)}'
             email_body = f"""            
@@ -112,7 +113,6 @@ class LoginView(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 """
 Steps for setting up password reset
-
 Setup an email view so as to send an email containing the link to set email
 View that when a user clicks a link in  the email the browser does a get request to validate the links
 Set up a view that sets up the password
