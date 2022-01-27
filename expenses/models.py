@@ -20,3 +20,6 @@ class Expenses(models.Model):
     owner = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
     description = models.TextField()
     date=models.DateField(blank=False, null=False)
+
+    def __str__(self) -> str:
+        return f'{str(self.owner)}\'s income'

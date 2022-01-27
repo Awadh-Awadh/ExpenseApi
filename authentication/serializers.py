@@ -73,6 +73,7 @@ class SetPasswordSerializer(serializers.Serializer):
                 return AuthenticationFailed("Invalid token", 401)
             user.set_password(password)
             user.save()
+            return user
 
         except DjangoUnicodeDecodeError:
              return AuthenticationFailed("Invalid token", 401)

@@ -14,9 +14,12 @@ class IncomeAPIView(generics.ListCreateAPIView):
   permission_classes = (permissions.IsAuthenticated, IsOwner)
   query_set = Income.objects.all()
 
-
+  """
+   perform_create(self, serializer) - Called by CreateModelMixin when saving a new object instance.
+   
+  """
   def perform_create(self, serializer):
-      return Income.objects.all().filter(owner=self.request.user)
+      return serializer.save(owner=self.request.user)
 
   def get_queryset(self):
       return self.query_set.filter(owner=self.request.user)
