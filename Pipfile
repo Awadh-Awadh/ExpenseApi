@@ -12,6 +12,7 @@ drf-yasg = "*"
 coverage = "*"
 faker = "*"
 django-cors-headers = "*"
+django-allauth = "*"
 
 [dev-packages]
 
