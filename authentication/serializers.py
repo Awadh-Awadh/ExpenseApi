@@ -31,6 +31,28 @@ class EmailVerifySerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.ModelSerializer):
     password=serializers.CharField(max_length=68, min_length=6, write_only=True)
+    tokens = serializers.SerializerMethodField()
+
+    '''
+    SerializerMethodfield creates a field that you can specify its fomart based on the 
+
+    object. The method takes the the one parameter which is supposed to be the method name.
+    
+    the method takes two params self and obj. obj is the instance.
+    
+    '''
+
+    def get_tokens(self, obj):
+        user = CustomUser.objects.get(email=obj.email)
+
+        return {
+            "access": user.tokens.get("access", None),
+            "refresh": user.tokens.get("refresh", None)
+        }
+
+
+
+
     class Meta:
         model= CustomUser
         fields = ['email', 'password', 'tokens', 'username']
