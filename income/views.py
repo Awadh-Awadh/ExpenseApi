@@ -27,7 +27,7 @@ class IncomeAPIView(generics.ListCreateAPIView):
 
 
 class IncomeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_classes = IncomeSerializer
+    serializer_class = IncomeSerializer
 
 
     '''
