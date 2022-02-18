@@ -1,9 +1,9 @@
 from django.template import exceptions
 from rest_framework.response import Response
-from rest_framework import status, generics, views
+from rest_framework import status, generics, views, permissions
 from authentication.serializers import (EmailVerifySerializer, LoginSerializer,
                                          RegisterSerializer, RequestPasswordResetEmailSerializer,
-                                         SetPasswordSerializer
+                                         SetPasswordSerializer, LogoutSerializer
                                          )
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
@@ -221,3 +221,17 @@ class SetPasswordAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({"success": True, "Message": "Password reset successfully"}, status = status.HTTP_200_OK)
+
+
+class LogoutAPIView(generics.GenericAPIView):
+
+    serializer_class = LogoutSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        

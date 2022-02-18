@@ -1,4 +1,3 @@
-from django.template import exceptions
 from jwt import DecodeError
 from rest_framework import serializers
 from authentication.models import CustomUser
@@ -7,6 +6,8 @@ from .renderers import AuthRender
 from django.utils.encoding import smart_bytes, smart_str, force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
 
 
 
@@ -100,4 +101,21 @@ class SetPasswordSerializer(serializers.Serializer):
         except DjangoUnicodeDecodeError:
              return AuthenticationFailed("Invalid token", 401)
 
-        return super().validate(attrs)
+
+
+class LogoutSerializer(serializers.Serializer):
+
+    refresh = serializers.CharField()
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+
+        return attrs
+
+
+    def save(self, **kwargs):
+        try:
+            RefreshToken(self.token).blacklist()
+        except TokenError:
+            raise ValueError("bad token")
+       
