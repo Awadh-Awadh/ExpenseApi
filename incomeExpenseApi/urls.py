@@ -20,6 +20,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from Utils.views import http_404, http_500
+
 ''''
 API documentations settings
 
@@ -50,4 +52,9 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
 ]
+ 
+# handling 500 and 404 requests from the utils package
+ 
 
+http_404 = "Utils.views.http_404"
+http_500 = "Utils.views.http_500"

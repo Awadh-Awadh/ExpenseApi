@@ -10,8 +10,12 @@ def custom_exception_handler(exc, context):
     "NotAuthenticated":  _handle_authentication_error,
 
   }
-  
+
   response = exception_handler(exc, context)
+  if response is not None:
+    response.data["status_code"] = response.status_code
+
+
   exception_class = exc.__class__.__name__
 
   if exception_class in handlers:
@@ -22,7 +26,8 @@ def custom_exception_handler(exc, context):
 
 def _handle_authentication_error(exc, exception, response):
     response.data = {
-      "error": "please login"
+      "error": "please login",
+      "status_code": response.status_code
     }
     return response
 
